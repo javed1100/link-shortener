@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Link Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #333;
+    }
+    input[type="url"] {
+      width: 80%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .output {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      width: 80%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    a {
+      color: #007BFF;
+      text-decoration: none;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Link Shortener</h1>
+  <input type="url" id="linkInput" placeholder="Paste your affiliate link here" />
+  <button onclick="shorten()">Shorten</button>
+
+  <div class="output" id="output" style="display:none;">
+    <p>Shortened link:</p>
+    <a href="#" id="shortLink" target="_blank"></a>
+  </div>
+
+  <script>
+    function shorten() {
+      const input = document.getElementById("linkInput").value.trim();
+      if (!input.startsWith("http")) {
+        alert("Please enter a valid URL starting with http or https.");
+        return;
+      }
+
+      const code = Math.random().toString(36).substr(2, 6);
+      const shortUrl = window.location.origin + "#" + code;
+
+      let data = JSON.parse(localStorage.getItem("links") || "{}");
+      data[code] = input;
+      localStorage.setItem("links", JSON.stringify(data));
+
+      const linkEl = document.getElementById("shortLink");
+      linkEl.href = shortUrl;
+      linkEl.textContent = shortUrl;
+      document.getElementById("output").style.display = "block";
+    }
+
+    window.onload = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        const data = JSON.parse(localStorage.getItem("links") || "{}");
+        if (data[hash]) {
+          window.location.href = data[hash];
+        }
+      }
+    };
+  </script>
+</body>
+</html>
